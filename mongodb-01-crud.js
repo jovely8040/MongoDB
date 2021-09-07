@@ -30,7 +30,7 @@ function testConnect() {
 }
 // testConnect();
 
-//  한개 문서 insert
+//  한개 문서 삽입: insert
 //  SQL: INSERT INTO mydb.friends VALUE(...);
 //  MongoDB: db.friends.insert({ 문서 })
 function testInsertOne(name) {
@@ -53,7 +53,7 @@ function testInsertOne(name) {
 }
 // testInsertOne("홍길동");
 
-//  다수 문서 삽입
+//  다수 문서 삽입: insert
 //  SQL: INSERT INTO friends VALUE(...), (...), (...)
 //  MongoDB: db.friends.insertMany([ { 문서 }, { 문서 }, ...])
 function testInsertMany(names) {
@@ -81,4 +81,68 @@ function testInsertMany(names) {
     }
 }
 // testInsertMany(["고길동", "둘리", "도우너"]);
-// testInsertMany("징길산"); 
+// testInsertMany("장길산");
+
+//  삭제: delete
+//  SQL: DELETE FROM friends [WHERE ...]
+//  MongoDB: db.friends.delete, db.friends.deleteMany({조건 객체})
+function testDeleteAll() {
+    client.connect()
+    .then(client => {
+        const db = client.db("mydb");
+        db.collection("friends").deleteMany({}) //  조건 객체
+        .then(result => {
+            console.log(result.deletedCount, "개 레코드 삭제");
+            client.close();
+        })
+    })
+}
+// testDeleteAll();
+
+function testInsertOneDoc(doc) {
+    client.connect()
+    .then(client => {
+        const db = client.db("mydb");
+        db.collection("friends")
+            .insertOne(doc)
+            .then(result => {
+                console.log(result.insertedId);
+                client.close();
+            })
+            .catch(reason => {
+                console.error(reason);
+            })
+    })
+}
+// testInsertOneDoc({name: "임꺽정", job: "도적"});
+
+// 연습 문제
+function testInsertManyDocs(docs) {
+    client.connect()
+    .then(client => {
+        const db = client.db("mydb");
+        if (Array.isArray(docs)) {
+            // 여러 개의 문서
+            db.collection("friends").insertMany(docs)
+            .then(result => {
+                console.log(result.insertedCount, "개 삽입");
+                client.close();
+            })
+            .catch(reason => {
+                console.error(reason);
+            })
+        }
+    })
+}
+testInsertManyDocs(
+    [{name: '고길동', gender: '남성', species: '인간', age: 50},
+     {name: '둘리', gender: '남성', species: '공룡', age: 10000000},
+     {name: '도우너', gender: '남성', species: '외계인', age: 15},
+     {name: '또치', gender: '여성', species: '조류', age: 15},
+     {name: '영희', gender: '여성', species: '인간', age: 12}]);
+     
+// 다른 모듈에서 사용할 수 있게 함수 내보내기
+// exports.내보낼이름 = 객체이름;
+exports.testInsertOneDoc = testInsertOneDoc;
+exports.testInsertManyDocs = testInsertManyDocs;
+exports.testDeleteAll = testDeleteAll;
