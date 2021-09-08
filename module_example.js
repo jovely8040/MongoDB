@@ -14,4 +14,19 @@ console.log(process.env);       //  환경 정보
 
 //  Global 변수
 console.log(__dirname);         //  현재 모듈의 디렉터리
-console.log(__filename);        //  현재 모듈의 파일명 
+console.log(__filename);        //  현재 모듈의 파일명
+
+// 모듈로부터 개별 객체 불러오기
+// const add = require("./modules/test_module1").add; // add함수 불러옴
+// const square = require("./modules/test_module1").square; // square함수 불러옴
+// 전개연산을 이용한 require
+const { add, square } = require("./modules/test_module1");
+
+const area = require("./modules/test_module2"); // area객체 불러옴
+
+console.log(add(10, 20)); // 불러온 add 객체 사용
+console.log(square(30));  // 불러온 square 객체 사용
+
+console.log(area.square(40));
+console.log(area.rectangle(10, 20));
+console.log(area.circle(30));
