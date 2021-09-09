@@ -116,6 +116,8 @@ app.get("/render", (req, resp) => {
 // Router 등록 (미들웨어)
 const WebRouter = require("./router/webrouter")(app);
 app.use("/web", WebRouter);
+const apiRouter = require("./router/APIRouter")(app);
+app.use("/api", apiRouter);
 
 // 몽고티비 커넥션 -> 커넥트 성공하면 클라이언트 넘어와 app연결
 function startServer() {
