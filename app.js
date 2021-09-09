@@ -31,6 +31,11 @@ const { MongoClient } = require("mongodb");
 // public 디렉터리 내부의 Static 파일을 정적 파일로 제공
 app.use(express.static(__dirname + "/public"));
 
+// body-parser 등록
+// 4.16 버전 이후에는 express 내부에 bodyParser가 포함 
+// POST 요청을 처리할 수 있게 된다.
+app.use(express.urlencoded({ extended: false }));
+
 // View 엔진 설정
 app.set("view engine", "ejs");  // 뷰엔진으로 ejs 사용 선언
 app.set("views", __dirname + "/views"); // 템플릿의 위치
