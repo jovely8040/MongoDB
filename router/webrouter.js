@@ -14,7 +14,7 @@ module.exports = (app) => {
             resp.render("friends_list", { friends: result });
         })
         .catch(reason => {
-            console.lerror(reason);
+            console.error(reason);
         })
         // resp.status(200)
         //     .contentType("text/html;charset=utf-8")
@@ -54,13 +54,60 @@ module.exports = (app) => {
 
         let db = app.get("db");
         db.collection('friends')
-        .findOne({_id: ObjectId(req.params.id)})
+        .findOne({ _id: ObjectId(req.params.id) })
         .then(result => {
             resp.render("friend_show", { friend: result });
         })
         .catch(reason => {
             resp.status(500)
                 .send("<p>사용자 정보가 없습니다.</p>");
+        })
+    });
+
+    // 사용자 정보 수정
+    // 수정 폼으로 이동
+    // id 정보를 가지고 수정
+    // /friends/modify (get)
+    router.get("/friends/modify/:id", (req, resp) => {
+        console.log("id:", req.params.id);
+
+        let db = app.get("db");
+        db.collection('friends')
+        .findOne({ _id: ObjectId(req.params.id) })
+        .then(result => {
+            resp.render("friend_modify_form", { friend: result });
+        })
+        .catch(reason => {
+            resp.status(500)
+                .send("<p>수정할 수 없습니다.</p>");
+        })
+    });
+    
+    // 사용자 정보 수정 전송 폼
+    // 수정(업데이트)
+    router.post("/friends/update/:id", (req, resp) => {
+        // 폼 정보는 req.body로 넘어온다.
+        let db = app.get("db");
+        let document = req.body;
+
+        db.collection('friends')
+        .UpdateOne(
+            { _id: ObjectId(req.params.id) }, // 조건 객체
+            {   $set: 
+                    { name: req.body.name,
+                    species: req.body.species,
+                    age: req.body.age }
+            }
+        )
+        .then(result => {
+            console.log(result);
+
+            resp.status(200)
+                .redirect("/web/friends");
+        })
+        .catch(reason => {
+            resp.status(500)
+                .send("<p>업데이트할 수 없습니다.</p>");
         })
     });
 
